@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<!-- Playables SDK -->
+<script>// Playables SDK v1.0.0
+// Game lifecycle bridge: rAF-based game-ready detection + event communication
+(function() {
+  'use strict';
+
+  // Idempotency: skip if already initialized (e.g., server-side injection
+  // followed by client-side inject-javascript via the Bloks webview component).
+  if (window.playablesSDK) return;
+
+  var HANDLER_NAME = 'playablesGameEventHandler';
+  var ANDROID_BRIDGE_NAME = '_MetaPlayablesBridge';
+  var RAF_FRAME_THRESHOLD = 3;
+
+  var gameReadySent = false;
+  var firstInteractionSent = false;
+  var errorSent = false;
+  var frameCount = 0;
+  var originalRAF = window.requestAnimationFrame;
+
+  // --- Transport Layer ---
+
+  function hasIOSBridge() {
+    return !!(window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers[HANDLER_NAME]);
+  }
+
+  function hasAndroidBridge() {
+    return !!(window[ANDROID_BRIDGE_NAME] &&
+              typeof window[ANDROID_BRIDGE_NAME].postEvent === 'function');
+  }
+
+  function isInIframe() {
+    return !!(window.parent && window.parent !== window);
+  }
+
+  function sendEvent(eventName, payload) {
+    var message = {
+      type: eventName,
+      payload: payload || {},
+      timestamp: Date.now()
+    };
+
+    if (hasIOSBridge()) {
+      try {
+        window.webkit.messageHandlers[HANDLER_NAME].postMessage(message);
+      } catch (e) { /* ignore */ }
+      return;
+    }
+
+    if (hasAndroidBridge()) {
+    try {
+      var p = payload || {};
+      p.__secureToken = window.__fbAndroidBridgeAuthToken || '';
+      p.timestamp = message.timestamp;
+      window[ANDROID_BRIDGE_NAME].postEvent(
+        eventName,
+        JSON.stringify(p)
+      );
+    } catch (e) { /* ignore */ }
+    return;
+  }
+
+    if (isInIframe()) {
+      try {
+        window.parent.postMessage(message, '*');
+      } catch (e) { /* ignore */ }
+      return;
+    }
+  }
+
+  // --- rAF Game-Ready Detection ---
+
+  function onFrame() {
+    if (gameReadySent) return;
+
+    frameCount++;
+    if (frameCount >= RAF_FRAME_THRESHOLD) {
+      gameReadySent = true;
+      sendEvent('game_ready', {
+        frame_count: frameCount,
+        detected_at: Date.now()
+      });
+      return;
+    }
+
+    originalRAF.call(window, onFrame);
+  }
+
+  if (originalRAF) {
+    window.requestAnimationFrame = function(callback) {
+      if (!gameReadySent) {
+        return originalRAF.call(window, function(timestamp) {
+          frameCount++;
+          if (frameCount >= RAF_FRAME_THRESHOLD && !gameReadySent) {
+            gameReadySent = true;
+            sendEvent('game_ready', {
+              frame_count: frameCount,
+              detected_at: Date.now()
+            });
+          }
+          callback(timestamp);
+        });
+      }
+      return originalRAF.call(window, callback);
+    };
+  }
+
+  // --- First User Interaction Detection ---
+
+  function setupFirstInteractionDetection() {
+    var events = ['touchstart', 'mousedown', 'keydown'];
+
+    function onFirstInteraction() {
+      if (firstInteractionSent) return;
+      firstInteractionSent = true;
+      sendEvent('user_interaction_start', null);
+
+      for (var i = 0; i < events.length; i++) {
+        document.removeEventListener(events[i], onFirstInteraction, true);
+      }
+    }
+
+    for (var i = 0; i < events.length; i++) {
+      document.addEventListener(events[i], onFirstInteraction, true);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupFirstInteractionDetection);
+  } else {
+    setupFirstInteractionDetection();
+  }
+
+  // --- Auto Error Capture ---
+
+  window.addEventListener('error', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    sendEvent('error', {
+      message: event.message || 'Unknown error',
+      source: event.filename || '',
+      lineno: event.lineno || 0,
+      colno: event.colno || 0,
+      auto_captured: true
+    });
+  });
+
+  window.addEventListener('unhandledrejection', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    var reason = event.reason;
+    sendEvent('error', {
+      message: (reason instanceof Error) ? reason.message : String(reason),
+      type: 'unhandled_promise_rejection',
+      auto_captured: true
+    });
+  });
+
+  // --- Public API ---
+
+  window.playablesSDK = {
+    complete: function(score) {
+      sendEvent('game_ended', {
+        score: score,
+        completed: true
+      });
+    },
+
+    error: function(message) {
+      if (errorSent) return;
+      errorSent = true;
+      sendEvent('error', {
+        message: message || 'Unknown error',
+        auto_captured: false
+      });
+    },
+
+    sendEvent: function(eventName, payload) {
+      if (!eventName || typeof eventName !== 'string') return;
+      sendEvent(eventName, payload);
+    }
+  };
+
+  // Kick off rAF detection in case no game code calls rAF immediately
+  if (originalRAF) {
+    originalRAF.call(window, onFrame);
+  }
+})();</script>
+<!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHERIS OS v3.0 - Enterprise Architecture & Operations Manual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans Thai', 'Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { -webkit-font-smoothing: antialiased; }
+        .layer-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .layer-card:hover { transform: translateY(-2px); }
+        .flow-arrow { animation: flowDown 2s infinite; }
+        @keyframes flowDown {
+            0%, 100% { opacity: 0.3; transform: translateY(-4px); }
+            50% { opacity: 1; transform: translateY(4px); }
+        }
+        .pulse-ring { animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite; }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+        .neural-orbit { animation: orbit 20s linear infinite; }
+        @keyframes orbit {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .timeline-connector { background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 50%, #93c5fd 100%); }
+        .glass { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 font-sans">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/80 glass border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-600/20">
+                        <span class="text-white font-bold text-sm">A3</span>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-slate-900 leading-tight">AETHERIS OS v3.0</div>
+                        <div class="text-[11px] text-slate-500 -mt-1">Enterprise Intelligence Platform</div>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center gap-6 text-sm">
+                    <a href="#architecture" class="text-slate-600 hover:text-blue-600 transition">สถาปัตยกรรม</a>
+                    <a href="#flow" class="text-slate-600 hover:text-blue-600 transition">การทำงาน</a>
+                    <a href="#dashboard" class="text-slate-600 hover:text-blue-600 transition">แดชบอร์ด</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="relative overflow-hidden bg-white border-b border-slate-200">
+        <div class="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-full text-xs font-medium text-blue-700 mb-6">
+                    <div class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+                    เอกสารสถาปัตยกรรมองค์กรและคู่มือปฏิบัติการ
+                </div>
+                <h1 class="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4">
+                    One Platform. One Intelligence Layer.
+                    <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">One Autonomous Enterprise.</span>
+                </h1>
+                <p class="text-lg text-slate-600 leading-relaxed">
+                    AETHERIS OS v3.0 คือระบบปฏิบัติการองค์กรอัจฉริยะที่รวมทุกช่องทาง ทุกข้อมูล และทุกการตัดสินใจไว้ใน Neural Core เดียว
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+        
+        <!-- 1. Architecture -->
+        <section id="architecture" class="scroll-mt-20">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-semibold">1</div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">สถาปัตยกรรมระบบเต็มรูปแบบ</h2>
+                    <p class="text-slate-600 text-sm">Full System Architecture - 8 Layer Interactive Stack</p>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-8">
+                    <div class="relative">
+                        <!-- Data Flow Line -->
+                        <div class="absolute left-8 top-12 bottom-12 w-0.5 bg-gradient-to-b from-blue-200 via-blue-400 to-slate-300 hidden md:block"></div>
+                        
+                        <div class="space-y-3" id="layers-container">
+                            <!-- Layers will be injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-4">
+                    <div class="sticky top-24 space-y-4">
+                        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                            <h3 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                                <i data-lucide="activity" class="w-4 h-4 text-blue-600"></i>
+                                การไหลของข้อมูล
+                            </h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex gap-3">
+                                    <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-medium mt-0.5">↓</div>
+                                    <div>
+                                        <div class="font-medium text-slate-900">Top-Down & Bottom-Up</div>
+                                        <div class="text-slate-600">ข้อมูลจากลูกค้าไหลลงสู่ Core และคำสั่งจาก AI ไหลขึ้นสู่ช่องทาง</div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-3">
+                                    <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-medium mt-0.5">↔</div>
+                                    <div>
+                                        <div class="font-medium text-slate-900">Lateral Collaboration</div>
+                                        <div class="text-slate-600">Agent ทำงานร่วมกันผ่าน Neural Core แบบ real-time</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-xl shadow-blue-600/20">
+                            <div class="text-sm opacity-90 mb-1">Latency</div>
+                            <div class="text-3xl font-bold mb-2">< 120ms</div>
+                            <div class="text-sm opacity-80">เวลาตอบสนองเฉลี่ยจาก Experience ถึง Action</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Operational Flow -->
+        <section id="flow" class="scroll-mt-20">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-semibold">2</div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">การทำงานจริงแบบ End-to-End</h2>
+                    <p class="text-slate-600 text-sm">Real Operational Flow - 8 ขั้นตอนอัตโนมัติ</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm overflow-hidden">
+                <div class="relative">
+                    <div class="absolute top-10 left-0 right-0 h-1 timeline-connector rounded-full hidden lg:block"></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-6 relative">
+                        <!-- Steps injected -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3 & 4 & 5 Combined -->
+        <section class="grid lg:grid-cols-12 gap-6">
+            <!-- Executive Copilot -->
+            <div class="lg:col-span-5">
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm h-full">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
+                            <i data-lucide="message-square" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-slate-900">Executive Copilot</h3>
+                            <p class="text-xs text-slate-500">ถาม-ตอบด้วยภาษาธรรมชาติ</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4" id="copilot-chats">
+                        <!-- Chats injected -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Digital Twin -->
+            <div class="lg:col-span-7">
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm h-full">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+                                <i data-lucide="atom" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900">Digital Twin Simulation</h3>
+                                <p class="text-xs text-slate-500">จำลองผลกระทบก่อนตัดสินใจจริง</p>
+                            </div>
+                        <span class="text-[11px] px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200 font-medium">LIVE</span>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <label class="text-sm font-medium text-slate-700">เพิ่มงบโฆษณา</label>
+                            <div class="flex items-center gap-2">
+                                <span id="budget-value" class="text-2xl font-bold text-blue-600">20%</span>
+                            </div>
+                        </div>
+                        <input type="range" id="budget-slider" min="0" max="50" value="20" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                        
+                        <div class="grid grid-cols-3 gap-3 mt-6">
+                            <div class="bg-white rounded-lg p-4 border border-slate-200">
+                                <div class="text-xs text-slate-500 mb-1">รายได้</div>
+                                <div id="sim-revenue" class="text-xl font-bold text-emerald-600">+15%</div>
+                                <div class="text-[11px] text-slate-500 mt-1">คาดการณ์ 90 วัน</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border border-slate-200">
+                                <div class="text-xs text-slate-500 mb-1">ลูกค้าใหม่</div>
+                                <div id="sim-customers" class="text-xl font-bold text-blue-600">+18%</div>
+                                <div class="text-[11px] text-slate-500 mt-1">~142 ราย</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border border-slate-200">
+                                <div class="text-xs text-slate-500 mb-1">Margin</div>
+                                <div id="sim-margin" class="text-xl font-bold text-amber-600">-2%</div>
+                                <div class="text-[11px] text-slate-500 mt-1">ชั่วคราว</div>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-xs text-slate-600 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                            <strong>คำแนะนำ AI:</strong> เพิ่มได้ ROI คาด 3.2x แนะนำเน้นช่องทาง LINE OA (CPA ต่ำสุด ฿180)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Dashboard -->
+        <section id="dashboard" class="scroll-mt-20">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-semibold">3</div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Command Center Dashboard</h2>
+                    <p class="text-slate-600 text-sm">ศูนย์บัญชาการ 5 มิติ แบบเรียลไทม์</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 xl:grid-cols-5 gap-4" id="dashboard-centers">
+                <!-- Dashboard cards injected -->
+            </div>
+        </section>
+
+        <!-- 7. Agent Marketplace -->
+        <section>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center font-semibold">4</div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Agent Marketplace</h2>
+                    <p class="text-slate-600 text-sm">เอเจนต์พร้อมใช้งานกว่า 50+ ตัว</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3" id="agent-marketplace">
+                <!-- Agents injected -->
+            </div>
+        </section>
+
+        <!-- 8. Workflow Builder -->
+        <section>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-semibold">5</div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Workflow Builder</h2>
+                    <p class="text-slate-600 text-sm">สร้าง Automation แบบ Drag & Drop ไม่ต้องเขียนโค้ด</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="grid lg:grid-cols-12 min-h-[320px]">
+                    <div class="lg:col-span-3 border-b lg:border-b-0 lg:border-r border-slate-200 p-4 bg-slate-50">
+                        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Components</div>
+                        <div class="space-y-2" id="workflow-palette">
+                            <!-- Palette injected -->
+                        </div>
+                    </div>
+                    <div class="lg:col-span-9 p-6 relative bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px]">
+                        <div class="absolute top-4 right-4 flex gap-2">
+                            <button class="px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg hover:bg-slate-50">ทดสอบ</button>
+                            <button class="px-3 py-1.5 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700">Deploy</button>
+                        </div>
+                        <div id="workflow-canvas" class="relative h-full min-h-[260px] flex items-center">
+                            <div class="flex items-center gap-3 w-full overflow-x-auto py-4" id="workflow-nodes">
+                                <!-- Nodes -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. Navigation -->
+        <section class="grid lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-slate-700 text-white flex items-center justify-center font-semibold">6</div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">System Navigation</h2>
+                        <p class="text-slate-600 text-sm">โครงสร้างหน้าจอหลัก</p>
+                    </div>
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                    <div class="space-y-1 text-sm" id="nav-tree">
+                        <!-- Tree injected -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 10. Final Goal -->
+            <div class="lg:col-span-7">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-semibold">7</div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">เป้าหมายสูงสุด: Autonomous Enterprise</h2>
+                        <p class="text-slate-600 text-sm">Digital C-Suite ทำงานร่วมกัน 24/7</p>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-b from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-8 text-white relative overflow-hidden shadow-2xl">
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.15),transparent_60%)]"></div>
+                    <div class="relative">
+                        <div class="flex justify-center mb-8">
+                            <div class="relative w-48 h-48">
+                                <!-- Orbit rings -->
+                                <div class="absolute inset-0 rounded-full border border-white/10"></div>
+                                <div class="absolute inset-4 rounded-full border border-white/5"></div>
+                                
+                                <!-- Core -->
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="relative">
+                                        <div class="absolute w-24 h-24 bg-blue-500/30 rounded-full pulse-ring"></div>
+                                        <div class="relative w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl shadow-blue-500/30">
+                                            <div class="text-center">
+                                                <div class="text-[10px] uppercase tracking-widest opacity-80">Neural</div>
+                                                <div class="font-bold text-sm">CORE</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- C-Suite nodes -->
+                                <div class="absolute inset-0 neural-orbit" id="csuite-orbit">
+                                    <!-- Nodes injected -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 md:grid-cols-6 gap-2 mb-6" id="csuite-labels">
+                            <!-- Labels -->
+                        </div>
+
+                        <div class="bg-white/5 backdrop-blur rounded-xl border border-white/10 p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-sm font-medium">Continuous Intelligence Loop</div>
+                                <div class="text-[10px] px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/30">24/7 ACTIVE</div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 text-xs">
+                                <span class="px-2.5 py-1 bg-white/10 rounded-full">รับรู้ Perceive</span>
+                                <span class="text-white/40">→</span>
+                                <span class="px-2.5 py-1 bg-white/10 rounded-full">วิเคราะห์ Analyze</span>
+                                <span class="text-white/40">→</span>
+                                <span class="px-2.5 py-1 bg-blue-500/30 rounded-full border border-blue-400/30">ตัดสินใจ Decide</span>
+                                <span class="text-white/40">→</span>
+                                <span class="px-2.5 py-1 bg-white/10 rounded-full">ดำเนินการ Execute</span>
+                                <span class="text-white/40">→</span>
+                                <span class="px-2.5 py-1 bg-white/10 rounded-full">เรียนรู้ Learn</span>
+                                <span class="text-white/40">→</span>
+                                <span class="px-2.5 py-1 bg-white/10 rounded-full">ปรับปรุง Improve</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+                        <span class="text-white text-xs font-bold">A3</span>
+                    </div>
+                    <div class="text-sm">
+                        <div class="font-semibold text-slate-900">AETHERIS OS v3.0</div>
+                        <div class="text-slate-500 text-xs">One Platform. One Intelligence Layer. One Autonomous Enterprise.</div>
+                    </div>
+                <div class="text-xs text-slate-500">© 2025 AETHERIS • Enterprise Architecture Documentation • ภาษาไทย</div>
+            </div>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+
+    // 1. Architecture Layers
+    const layers = [
+        {
+            id: 1, name: 'EXPERIENCE LAYER', th: 'ชั้นประสบการณ์', color: 'from-sky-500 to-blue-600',
+            items: ['LINE OA', 'Facebook', 'Website', 'Mobile App', 'Email', 'Voice AI', 'WhatsApp', 'API Channels'],
+            detail: 'Omni-channel รองรับลูกค้าไทยทุกแพลตฟอร์ม ข้อมูลเข้าสู่ Neural Core แบบเรียลไทม์ พร้อมรองรับภาษาไทย 100%'
+        },
+        {
+            id: 2, name: 'AGENT ECOSYSTEM', th: 'ระบบนิเวศเอเจนต์', color: 'from-violet-500 to-purple-600',
+            items: ['MAEW AI', 'Sales AI', 'Marketing AI', 'Finance AI', 'Operations AI', 'Analytics AI', 'HR AI', 'CEO AI', 'CTO AI', 'CFO AI', 'COO AI', 'Industry Agents'],
+            detail: 'เอเจนต์อัจฉริยะ 12+ ตัวทำงานเป็นทีม MAEW AI เป็นผู้ประสานงานหลัก ตัดสินใจและส่งต่องานอัตโนมัติ'
+        },
+        {
+            id: 3, name: 'AETHERIS NEURAL CORE', th: 'แกนประสาทกลาง', color: 'from-blue-600 to-indigo-700',
+            items: ['Agent Orchestrator', 'Workflow Brain', 'Decision Engine', 'Context Engine', 'Knowledge Engine', 'Enterprise Memory', 'AI Governance'],
+            detail: 'สมองกลางประมวลผลทุกการตัดสินใจ จัดลำดับงาน เข้าใจบริบท เรียนรู้ต่อเนื่อง และจดจำทุกปฏิสัมพันธ์'
+        },
+        {
+            id: 4, name: 'ENTERPRISE KNOWLEDGE GRAPH', th: 'กราฟความรู้องค์กร', color: 'from-emerald-500 to-teal-600',
+            items: ['Customer Relationships', 'Products', 'Revenue', 'Operations', 'Support', 'Business Context'],
+            detail: 'เชื่อมโยงข้อมูลเป็นกราฟความสัมพันธ์ ทำให้ AI เข้าใจลูกค้า สินค้า และบริบทธุรกิจแบบลึกซึ้ง'
+        },
+        {
+            id: 5, name: 'ENTERPRISE DATA FABRIC', th: 'ผ้าข้อมูลองค์กร', color: 'from-amber-500 to-orange-600',
+            items: ['CRM', 'ERP', 'POS', 'Accounting', 'Inventory', 'HRM', 'Data Warehouse'],
+            detail: 'เชื่อมต่อระบบเดิมทั้งหมดโดยไม่ต้องย้ายข้อมูล ใช้ Data Virtualization เข้าถึงข้อมูลแบบ real-time'
+        },
+        {
+            id: 6, name: 'AUTOMATION FABRIC', th: 'ระบบอัตโนมัติ', color: 'from-rose-500 to-pink-600',
+            items: ['Workflow Automation', 'Event Processing', 'Agent Collaboration', 'Autonomous Actions'],
+            detail: 'เครื่องยนต์ประมวลผล 10,000+ events/วินาที สร้าง action อัตโนมัติ เอเจนต์ทำงานร่วมกัน'
+        },
+        {
+            id: 7, name: 'SECURITY & GOVERNANCE', th: 'ความปลอดภัย', color: 'from-slate-600 to-slate-800',
+            items: ['Zero Trust', 'RBAC', 'Audit Trail', 'PDPA/ISO27001', 'Encryption'],
+            detail: 'ความปลอดภัยระดับธนาคาร รองรับ PDPA ไทย เข้ารหัส end-to-end ตรวจสอบได้ทุกการกระทำ'
+        },
+        {
+            id: 8, name: 'MULTI CLOUD INFRASTRUCTURE', th: 'โครงสร้างพื้นฐาน', color: 'from-gray-700 to-zinc-900',
+            items: ['AWS', 'Azure', 'Google Cloud', 'Hybrid Cloud', 'On-Premise'],
+            detail: 'ทำงานบนคลาวด์ชั้นนำ รองรับ Hybrid และ On-Premise ในประเทศไทย Uptime 99.99%'
+        }
+    ];
+
+    const layersContainer = document.getElementById('layers-container');
+    layers.forEach((layer, idx) => {
+        const el = document.createElement('div');
+        el.className = 'layer-card relative';
+        el.innerHTML = `
+            <div class="flex items-start gap-4">
+                <div class="hidden md:flex flex-col items-center pt-2">
+                    <div class="w-8 h-8 rounded-full bg-white border-2 border-slate-300 flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm z-10">${layer.id}</div>
+                    ${idx < layers.length - 1 ? '<div class="w-0.5 h-16 bg-slate-200 mt-1 flow-arrow"></div>' : ''}
+                </div>
+                <div class="flex-1 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition cursor-pointer" onclick="toggleLayer(${layer.id})">
+                    <div class="p-4 md:p-5">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br ${layer.color} shadow-lg flex items-center justify-center">
+                                        <i data-lucide="${idx===0?'layers':idx===1?'bot':idx===2?'brain':idx===3?'share-2':idx===4?'database':idx===5?'zap':idx===6?'shield': 'cloud'}" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-slate-900 tracking-wide text-sm">${layer.name}</div>
+                                        <div class="text-xs text-slate-500">${layer.th}</div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5 mt-3">
+                                    ${layer.items.slice(0,6).map(item => `<span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-[11px] font-medium">${item}</span>`).join('')}
+                                    ${layer.items.length > 6 ? `<span class="px-2.5 py-1 bg-slate-100 text-slate-500 rounded-lg text-[11px]">+${layer.items.length-6}</span>` : ''}
+                                </div>
+                            </div>
+                            <button class="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 transition">
+                                <i data-lucide="chevron-down" class="w-4 h-4 transition-transform" id="chev-${layer.id}"></i>
+                            </button>
+                        </div>
+                        <div id="layer-detail-${layer.id}" class="grid grid-rows-[0fr] transition-all duration-300">
+                            <div class="overflow-hidden">
+                                <div class="pt-4 mt-4 border-t border-slate-100">
+                                    <p class="text-sm text-slate-600 leading-relaxed">${layer.detail}</p>
+                                    <div class="mt-3 flex flex-wrap gap-1.5">
+                                        ${layer.items.map(item => `<span class="px-2 py-1 bg-blue-50 text-blue-700 rounded text-[11px]">${item}</span>`).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        layersContainer.appendChild(el);
+    });
+    lucide.createIcons();
+
+    window.toggleLayer = (id) => {
+        const detail = document.getElementById(`layer-detail-${id}`);
+        const chev = document.getElementById(`chev-${id}`);
+        const isOpen = detail.style.gridTemplateRows === '1fr';
+        document.querySelectorAll('[id^="layer-detail-"]').forEach(d => d.style.gridTemplateRows = '0fr');
+        document.querySelectorAll('[id^="chev-"]').forEach(c => c.style.transform = 'rotate(0deg)');
+        if (!isOpen) {
+            detail.style.gridTemplateRows = '1fr';
+            chev.style.transform = 'rotate(180deg)';
+        }
+    };
+
+    // 2. Operational Flow
+    const steps = [
+        { icon: 'message-circle', title: 'STEP 1', desc: 'ลูกค้าส่ง LINE สนใจระบบ AI', detail: 'Intent: สอบถามราคา' },
+        { icon: 'scan-search', title: 'STEP 2', desc: 'MAEW AI วิเคราะห์', detail: 'Lead Score 88/100 • Retail • High Intent' },
+        { icon: 'network', title: 'STEP 3', desc: 'Knowledge Graph ตรวจสอบ', detail: 'ประวัติ: เคยดูเดโม' },
+        { icon: 'file-text', title: 'STEP 4', desc: 'Sales AI สร้างข้อเสนอ', detail: 'Proposal + Quotation + Follow-up' },
+        { icon: 'send', title: 'STEP 5', desc: 'Marketing AI ส่งข้อมูล', detail: 'Case Study • Email • Retargeting' },
+        { icon: 'calculator', title: 'STEP 6', desc: 'Finance AI คำนวณ', detail: 'Revenue • Margin • ARR Impact' },
+        { icon: 'calendar-check', title: 'STEP 7', desc: 'Operations AI สร้างโปรเจกต์', detail: 'Tasks • Timeline • Resources' },
+        { icon: 'bar-chart-3', title: 'STEP 8', desc: 'Analytics AI อัปเดต', detail: 'Dashboard Real-Time' },
+    ];
+    const flowContainer = document.querySelector('#flow .grid');
+    steps.forEach((s, i) => {
+        const div = document.createElement('div');
+        div.className = 'relative';
+        div.innerHTML = `
+            <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition h-full">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center mb-3 shadow-md">
+                    <i data-lucide="${s.icon}" class="w-5 h-5"></i>
+                </div>
+                <div class="text-[11px] font-semibold text-blue-600 mb-1">${s.title}</div>
+                <div class="font-medium text-slate-900 text-sm leading-snug mb-1">${s.desc}</div>
+                <div class="text-xs text-slate-500">${s.detail}</div>
+            </div>
+        `;
+        flowContainer.appendChild(div);
+    });
+    lucide.createIcons();
+
+    // 3. Copilot
+    const chats = [
+        { q: 'ยอดขายเดือนหน้าจะเป็นเท่าไหร่?', a: 'คาดการณ์รายได้ <b>3.8 ล้านบาท</b> ความเชื่อมั่น 91%<br><span class="opacity-80 text-xs">ปัจจัย: Pipeline 85 ดีล • อัตราปิด 32% • มูลค่าเฉลี่ย ฿140,000</span>' },
+        { q: 'ลูกค้ารายไหนเสี่ยงยกเลิกบ้าง?', a: 'พบ <b>12 บัญชีเสี่ยงสูง</b> (Churn Score >75)<br><span class="opacity-80 text-xs">Top: บริษัท A (ไม่ใช้งาน 23 วัน) • แนะนำให้ MAEW AI ติดต่อทันที</span>' },
+        { q: 'ควรเพิ่มงบการตลาดไหม?', a: 'แนะนำ <b>เพิ่มได้</b> ROI คาด 3.2x<br><span class="opacity-80 text-xs">ดูผลจำลองที่ Digital Twin → รายได้ +15%</span>' },
+    ];
+    const chatContainer = document.getElementById('copilot-chats');
+    chats.forEach(c => {
+        chatContainer.innerHTML += `
+            <div class="flex gap-2.5">
+                <div class="w-7 h-7 rounded-full bg-slate-200 flex-shrink-0 flex items-center justify-center text-[11px]">👤</div>
+                <div class="bg-slate-100 rounded-2xl rounded-tl-sm px-3.5 py-2.5 text-sm text-slate-800 max-w-[85%]">${c.q}</div>
+            </div>
+            <div class="flex gap-2.5 justify-end">
+                <div class="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-3.5 py-2.5 text-sm max-w-[85%] leading-relaxed">${c.a}</div>
+                <div class="w-7 h-7 rounded-full bg-blue-600 flex-shrink-0 flex items-center justify-center text-[11px] text-white">AI</div>
+            </div>
+        `;
+    });
+
+    // 4. Digital Twin slider
+    const slider = document.getElementById('budget-slider');
+    const budgetVal = document.getElementById('budget-value');
+    const rev = document.getElementById('sim-revenue');
+    const cus = document.getElementById('sim-customers');
+    const mar = document.getElementById('sim-margin');
+    slider.addEventListener('input', e => {
+        const v = parseInt(e.target.value);
+        budgetVal.textContent = v + '%';
+        rev.textContent = '+' + Math.round(v * 0.75) + '%';
+        cus.textContent = '+' + Math.round(v * 0.9) + '%';
+        mar.textContent = (v === 0 ? '0%' : '-' + Math.round(v * 0.1) + '%');
+    });
+
+    // 5. Dashboard Centers
+    const centers = [
+        { name: 'Revenue Center', icon: 'trending-up', color: 'emerald', metrics: [['ARR', '42.5 ลบ.'], ['MRR', '3.54 ลบ.'], ['รายได้เดือนนี้', '3.8 ลบ.'], ['Forecast Q4', '12.2 ลบ.']] },
+        { name: 'Customer Center', icon: 'users', color: 'blue', metrics: [['ลูกค้าใหม่', '124'], ['Retention', '94.2%'], ['Churn', '1.8%'], ['NPS', '68']] },
+        { name: 'Operations Center', icon: 'settings', color: 'violet', metrics: [['Automation', '87%'], ['SLA', '99.2%'], ['Productivity', '+34%'], ['Tasks Auto', '4,281']] },
+        { name: 'Finance Center', icon: 'wallet', color: 'amber', metrics: [['Gross Margin', '72%'], ['Cashflow', '+2.1 ลบ.'], ['Burn Rate', '850K'], ['Runway', '28 เดือน']] },
+        { name: 'AI Center', icon: 'cpu', color: 'slate', metrics: [['Agent Perf.', '96.4%'], ['ค่าใช้จ่าย AI', '฿42,300'], ['Token Usage', '18.4M'], ['Accuracy', '94.7%']] },
+    ];
+    const dash = document.getElementById('dashboard-centers');
+    centers.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition';
+        card.innerHTML = `
+            <div class="flex items-center gap-2.5 mb-4">
+                <div class="w-8 h-8 rounded-lg bg-${c.color}-100 text-${c.color}-600 flex items-center justify-center">
+                    <i data-lucide="${c.icon}" class="w-4 h-4"></i>
+                </div>
+                <div class="font-semibold text-slate-900 text-sm">${c.name}</div>
+            </div>
+            <div class="space-y-3">
+                ${c.metrics.map(m => `
+                    <div class="flex items-center justify-between">
+                        <div class="text-xs text-slate-500">${m[0]}</div>
+                        <div class="text-sm font-semibold text-slate-900">${m[1]}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        dash.appendChild(card);
+    });
+    lucide.createIcons();
+
+    // 6. Agent Marketplace
+    const agents = [
+        { n: 'Sales AI', d: 'ปิดการขายอัตโนมัติ', c: 'จาก-blue-500 to-indigo-600' },
+        { n: 'Marketing AI', d: 'ทำคอนเทนต์ ยิงแอด', c: 'from-pink-500 to-rose-600' },
+        { n: 'MAEW AI', d: 'ผู้ช่วยส่วนตัวภาษาไทย', c: 'from-violet-500 to-purple-600' },
+        { n: 'Finance AI', d: 'วิเคราะห์กำไร กระแสเงินสด', c: 'from-emerald-500 to-teal-600' },
+        { n: 'HR AI', d: 'สรรหา ประเมินพนักงาน', c: 'from-amber-500 to-orange-600' },
+        { n: 'Operations AI', d: 'จัดการโปรเจกต์', c: 'from-slate-600 to-slate-800' },
+        { n: 'CEO AI', d: 'วิเคราะห์กลยุทธ์', c: 'from-blue-600 to-cyan-600' },
+        { n: 'Analytics AI', d: 'สร้างรายงานอัจฉริยะ', c: 'from-indigo-500 to-violet-600' },
+        { n: 'Support AI', d: 'ตอบลูกค้า 24/7', c: 'from-teal-500 to-emerald-600' },
+        { n: 'CFO AI', d: 'วางแผนการเงิน', c: 'from-rose-500 to-pink-600' },
+        { n: 'Retail Agent', d: 'เฉพาะธุรกิจค้าปลีก', c: 'from-orange-500 to-red-600' },
+        { n: 'MFG Agent', d: 'เฉพาะโรงงานผลิต', c: 'from-gray-600 to-zinc-800' },
+    ];
+    const market = document.getElementById('agent-marketplace');
+    agents.forEach(a => {
+        market.innerHTML += `
+            <div class="group bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg hover:-translate-y-0.5 transition cursor-pointer">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br ${a.c} mb-3 shadow-md group-hover:scale-110 transition"></div>
+                <div class="font-medium text-slate-900 text-sm">${a.n}</div>
+                <div class="text-xs text-slate-500 mt-0.5">${a.d}</div>
+            </div>
+        `;
+    });
+
+    // 7. Workflow Builder
+    const palette = [
+        { id: 'trigger', label: 'LINE Message', icon: 'message-square' },
+        { id: 'ai', label: 'MAEW AI', icon: 'bot' },
+        { id: 'action', label: 'Create Lead', icon: 'user-plus' },
+        { id: 'action2', label: 'Send Proposal', icon: 'send' },
+    ];
+    const paletteEl = document.getElementById('workflow-palette');
+    palette.forEach(p => {
+        paletteEl.innerHTML += `
+            <div class="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs cursor-grab active:cursor-grabbing hover:bg-slate-50" draggable="true">
+                <i data-lucide="${p.icon}" class="w-3.5 h-3.5 text-slate-500"></i>
+                <span>${p.label}</span>
+            </div>
+        `;
+    });
+    const nodes = [
+        { l: 'LINE Message', s: 'Trigger' },
+        { l: 'MAEW AI วิเคราะห์', s: 'AI' },
+        { l: 'สร้าง Lead ใน CRM', s: 'Action' },
+        { l: 'Sales AI ส่งใบเสนอราคา', s: 'AI' },
+        { l: 'Marketing Follow-up', s: 'Auto' },
+    ];
+    const nodesEl = document.getElementById('workflow-nodes');
+    nodes.forEach((n, i) => {
+        nodesEl.innerHTML += `
+            <div class="flex items-center">
+                <div class="bg-white border-2 border-blue-200 rounded-xl px-4 py-3 shadow-sm min-w-[140px] text-center">
+                    <div class="text-[10px] text-blue-600 font-medium uppercase">${n.s}</div>
+                    <div class="text-xs font-medium text-slate-900 mt-0.5 whitespace-nowrap">${n.l}</div>
+                </div>
+                ${i < nodes.length -1 ? '<div class="w-8 h-0.5 bg-blue-300 mx-1 relative"><div class="absolute -right-1 top-1/2 -translate-y-1/2 w-0 h-0 border-l-4 border-l-blue-400 border-y-4 border-y-transparent"></div></div>' : ''}
+            </div>
+        `;
+    });
+    lucide.createIcons();
+
+    // 8. Nav Tree
+    const tree = [
+        { n: 'หน้าหลัก (Executive Dashboard)', c: ['Revenue Intelligence', 'Customer 360', 'Operations Command'] },
+        { n: 'Agent Console', c: ['MAEW AI Chat', 'Sales AI Workspace', 'Marketing AI Studio'] },
+        { n: 'Knowledge Graph Explorer', c: ['Customer Graph', 'Product Graph'] },
+        { n: 'Automation Studio', c: ['Workflow Builder', 'Event Rules'] },
+        { n: 'Data Fabric', c: ['Connectors', 'Data Models'] },
+        { n: 'Security Center', c: ['Audit Trail', 'Access Control'] },
+    ];
+    const navEl = document.getElementById('nav-tree');
+    tree.forEach(t => {
+        navEl.innerHTML += `
+            <div class="py-1.5">
+                <div class="flex items-center gap-2 font-medium text-slate-800"><i data-lucide="folder" class="w-3.5 h-3.5 text-slate-400"></i>${t.n}</div>
+                <div class="ml-5 mt-1 space-y-1">
+                    ${t.c.map(ch => `<div class="flex items-center gap-2 text-slate-600"><i data-lucide="chevron-right" class="w-3 h-3"></i>${ch}</div>`).join('')}
+                </div>
+            </div>
+        `;
+    });
+    lucide.createIcons();
+
+    // 9. C-Suite
+    const csuite = ['Digital CEO', 'Digital COO', 'Digital CFO', 'Digital CMO', 'Digital CRO', 'Digital CXO'];
+    const orbit = document.getElementById('csuite-orbit');
+    const labels = document.getElementById('csuite-labels');
+    csuite.forEach((name, i) => {
+        const angle = (i * 60 - 90) * Math.PI / 180;
+        const r = 85;
+        const x = 96 + r * Math.cos(angle);
+        const y = 96 + r * Math.sin(angle);
+        const dot = document.createElement('div');
+        dot.className = 'absolute w-8 h-8 -ml-4 -mt-4';
+        dot.style.left = x + 'px';
+        dot.style.top = y + 'px';
+        dot.innerHTML = `<div class="w-8 h-8 rounded-full bg-white/10 border border-white/20 backdrop-blur flex items-center justify-center"><div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div></div>`;
+        orbit.appendChild(dot);
+
+        labels.innerHTML += `<div class="text-center px-2 py-1.5 bg-white/5 rounded-lg border border-white/10 text-[11px]">${name}</div>`;
+    });
+});
+</script>
+<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
+</body>
+</html>
