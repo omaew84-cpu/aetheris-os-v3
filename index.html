@@ -1,33 +1,120 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AETHERIS OS v3.0</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AETHERIS OS v3.0 — Investor Deck</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 <style>
-body{background:#080c1c;color:#fff;font-family:Inter,sans-serif;overflow:hidden}
-.glass{background:rgba(255,255,255,.06);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1)}
+*{ -webkit-font-smoothing:antialiased }
+body{background:#080c1c;font-family:'Inter',sans-serif;overflow:hidden;color:#fff}
+h1,h2{font-family:'Space Grotesk',sans-serif}
+.glass{background:rgba(255,255,255,.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08)}
+.glass-strong{background:rgba(8,12,28,.75);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.12)}
+.text-gradient{background:linear-gradient(90deg,#00d4ff,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.aurora{position:absolute;border-radius:50%;filter:blur(120px);opacity:.5}
+.a1{width:800px;height:800px;background:radial-gradient(circle,#00d4ff,transparent 60%);top:-20%;left:-20%}
+.a2{width:700px;height:700px;background:radial-gradient(circle,#8b5cf6,transparent 60%);bottom:-30%;right:-15%}
+.slide{opacity:.4;transform:scale(.97);transition:all.6s}
+.slide.active{opacity:1;transform:scale(1)}
 </style>
 </head>
-<body>
-<div class="fixed top-0 w-full h-14 flex items-center justify-between px-6 z-50">
-  <div class="flex items-center gap-2"><div class="w-7 h-7 rounded bg-gradient-to-br from-cyan-400 to-violet-600"></div><span class="text-xs opacity-70">AETHERIS OS v3.0</span></div>
-  <div class="flex gap-2">
-    <a href="./presentation.pptx" download class="glass px-3 py-1.5 rounded-full text-xs">PPTX</a>
-    <a href="./blueprint.pdf" download class="glass px-3 py-1.5 rounded-full text-xs">PDF</a>
+<body class="select-none">
+<div class="fixed inset-0 -z-10"><div class="aurora a1"></div><div class="aurora a2"></div></div>
+
+<!-- HEADER -->
+<div class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-4 md:px-10 h-16">
+  <div class="flex items-center gap-3">
+    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00d4ff] to-[#8b5cf6] flex items-center justify-center font-bold text-black">A</div>
+    <span class="text-sm tracking-widest opacity-70">AETHERIS OS v3.0</span>
+  </div>
+  <div class="flex items-center gap-2">
+    <a href="./presentation.pptx" download class="hidden md:flex glass px-3 py-1.5 rounded-full text-xs hover:bg-white/10">PPTX</a>
+    <a href="./blueprint.pdf" download class="hidden md:flex glass px-3 py-1.5 rounded-full text-xs hover:bg-white/10">PDF</a>
+    <a href="https://github.com/omaew84-cpu/aetheris-os-v3" target="_blank" class="glass px-3 py-1.5 rounded-full text-xs">GitHub</a>
   </div>
 </div>
 
-<div class="h-screen flex flex-col items-center justify-center text-center px-6">
-  <h1 class="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-violet-500 bg-clip-text text-transparent">AETHERIS OS</h1>
-  <p class="text-xl opacity-80 mb-10">Autonomous Enterprise Intelligence Network</p>
-  
-  <div class="flex flex-col gap-3 w-full max-w-xs">
-    <a href="./presentation.pptx" download class="glass py-4 rounded-xl font-medium">ดาวน์โหลด PPTX (12 สไลด์)</a>
-    <a href="./blueprint.pdf" download class="glass py-4 rounded-xl font-medium">ดาวน์โหลด PDF</a>
-    <a href="https://github.com/omaew84-cpu/aetheris-os-v3" target="_blank" class="opacity-60 text-sm mt-2">เปิด GitHub</a>
-  </div>
+<div class="fixed top-0 left-0 w-full h-[2px] z-50 bg-white/5"><div id="progress" class="h-full bg-gradient-to-r from-[#00d4ff] to-[#8b5cf6]" style="width:8.33%"></div></div>
+
+<div class="relative w-screen h-screen overflow-hidden">
+<div id="slides" class="flex h-full transition-transform duration-700">
+
+<!-- 1 COVER -->
+<section class="slide active w-screen h-screen flex-shrink-0 flex items-center justify-center px-6">
+<div class="text-center">
+<div class="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-8 text-xs"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>LIVE DEMO</div>
+<h1 class="text-6xl md:text-8xl font-bold mb-6"><span class="text-gradient">AETHERIS OS</span></h1>
+<p class="text-2xl md:text-3xl opacity-80 mb-4">Autonomous Enterprise Intelligence Network</p>
+<p class="opacity-60">Version 3.0 — Investor Presentation</p>
 </div>
+</section>
+
+<!-- 2 PROBLEM -->
+<section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center px-6">
+<div class="max-w-5xl w-full">
+<h2 class="text-4xl md:text-6xl font-bold mb-12">The $2.3T <span class="text-gradient">Problem</span></h2>
+<div class="grid md:grid-cols-3 gap-6">
+<div class="glass p-8 rounded-2xl"><div class="text-5xl mb-4">⏳</div><h3 class="text-xl mb-2">Decision Latency</h3><p class="opacity-70 text-sm">73% of enterprises take 3+ weeks for critical decisions</p></div>
+<div class="glass p-8 rounded-2xl"><div class="text-5xl mb-4">🔗</div><h3 class="text-xl mb-2">Data Silos</h3><p class="opacity-70 text-sm">Average 137 SaaS tools, zero unified intelligence</p></div>
+<div class="glass p-8 rounded-2xl"><div class="text-5xl mb-4">💸</div><h3 class="text-xl mb-2">AI Waste</h3><p class="opacity-70 text-sm">$400B spent yearly on AI pilots that never scale</p></div>
+</div>
+</div>
+</section>
+
+<!-- 3 SOLUTION -->
+<section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center px-6">
+<div class="max-w-5xl text-center">
+<h2 class="text-4xl md:text-6xl font-bold mb-6">One OS to <span class="text-gradient">Rule Them All</span></h2>
+<p class="text-xl opacity-80 mb-12 max-w-3xl mx-auto">AETHERIS replaces dashboards with autonomous agents that think, decide, and execute</p>
+<div class="glass-strong p-10 rounded-3xl inline-block">
+<div class="text-7xl mb-4">🧠</div>
+<div class="text-2xl font-semibold">Autonomous Decision Engine</div>
+</div>
+</div>
+</section>
+
+<!-- 4-11 PLACEHOLDERS -->
+<section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center"><div class="text-center glass p-12 rounded-3xl"><h2 class="text-5xl font-bold mb-4">Product Demo</h2><p class="opacity-70">Slide 4</p></div></section>
+<section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center"><div class="text-center glass p-12 rounded-3xl"><h2 class="text-5xl font-bold mb-4">Architecture</h2><p class="opacity-70">Slide 5</p></div></section>
+<section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center"><div class="text-center glass p-12 rounded-3xl"><h2 class="text-5xl font-bold mb-4">Traction</h2><p class="opacity-70">Slide 6</p></div></section>
+<section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center"><div class="text-center glass p-12 rounded-3xl"><h2 class="text-5xl font-bold mb-4">Market</h2><p class="opacity-70">Slide 7</p></div></section>
+<section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center"><div class="text-center glass p-12 rounded-3xl"><h2 class="text-5xl font-bold mb-4">Business Model</h2><p class="opacity-70">Slide 8</p></div></section>
+<section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center"><div class="text-center glass p-12 rounded-3xl"><h2 class="text-5xl font-bold mb-4">Competition</h2><p class="opacity-70">Slide 9</p></div></section>
+<section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center"><div class="text-center glass p-12 rounded-3xl"><h2 class="text-5xl font-bold mb-4">Team</h2><p class="opacity-70">Slide 10</p></div></section>
+<section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center"><div class="text-center glass p-12 rounded-3xl"><h2 class="text-5xl font-bold mb-4">Roadmap</h2><p class="opacity-70">Slide 11</p></div></section>
+
+<!-- 12 CLOSING -->
+<section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center px-6">
+<div class="text-center max-w-4xl">
+<h2 class="text-5xl md:text-7xl font-bold mb-6">Raising <span class="text-gradient">$15M</span></h2>
+<p class="text-xl opacity-80 mb-12">Series A to scale the Autonomous Enterprise</p>
+
+<div class="flex flex-wrap justify-center gap-3 mb-10 md:hidden">
+<a href="./presentation.pptx" download class="glass px-6 py-3 rounded-xl">ดาวน์โหลด PPTX</a>
+<a href="./blueprint.pdf" download class="glass px-6 py-3 rounded-xl">ดาวน์โหลด PDF</a>
+</div>
+
+<div class="glass-strong inline-flex flex-col md:flex-row items-center gap-6 px-8 py-6 rounded-2xl">
+<div class="text-left"><div class="text-xs opacity-60 uppercase tracking-wider mb-1">Contact</div><div class="font-mono">founders@aetheris.ai</div></div>
+<div class="w-px h-12 bg-white/10 hidden md:block"></div>
+<div class="text-left"><div class="text-xs opacity-60 uppercase tracking-wider mb-1">Deck</div><div class="flex gap-3 text-sm"><a href="./presentation.pptx" class="underline">PPTX</a><a href="./blueprint.pdf" class="underline">PDF</a></div></div>
+</div>
+</div>
+</section>
+
+</div>
+</div>
+
+<button id="prev" class="fixed left-4 top-1/2 -translate-y-1/2 z-50 w-11 h-11 glass rounded-full hover:bg-white/10">‹</button>
+<button id="next" class="fixed right-4 top-1/2 -translate-y-1/2 z-50 w-11 h-11 glass rounded-full hover:bg-white/10">›</button>
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 glass px-4 py-2 rounded-full text-xs"><span id="current">1</span> / 12 • ← →</div>
+
+<script>
+const slides=document.getElementById('slides'); const total=12; let c=0;
+function upd(){slides.style.transform=`translateX(-${c*100}vw)`;document.getElementById('progress').style.width=`${((c+1)/total)*100}%`;document.getElementById('current').textContent=c+1;document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i===c))}
+document.getElementById('next').onclick=()=>{if(c<total-1){c++;upd()}};document.getElementById('prev').onclick=()=>{if(c>0){c--;upd()}};document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')document.getElementById('next').click();if(e.key==='ArrowLeft')document.getElementById('prev').click()});upd()
+</script>
 </body>
 </html>
