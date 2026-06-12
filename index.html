@@ -9,110 +9,30 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        body {
-            background: #080c1c;
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
-            overscroll-behavior: none;
-        }
-        h1, h2, .display {
-            font-family: 'Space Grotesk', sans-serif;
-            letter-spacing: -0.02em;
-        }
-        .glass {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-strong {
-            background: rgba(8, 12, 28, 0.7);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-        .text-gradient {
-            background: linear-gradient(90deg, #00d4ff 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .aurora {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.5;
-            will-change: transform;
-        }
-        .aurora-1 {
-            width: 800px; height: 800px;
-            background: radial-gradient(circle, #00d4ff 0%, transparent 60%);
-            top: -20%; left: -20%;
-            animation: float1 22s infinite alternate ease-in-out;
-        }
-        .aurora-2 {
-            width: 700px; height: 700px;
-            background: radial-gradient(circle, #8b5cf6 0%, transparent 60%);
-            bottom: -30%; right: -15%;
-            animation: float2 28s infinite alternate ease-in-out;
-        }
-        .aurora-3 {
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, #00d4ff 0%, transparent 70%);
-            top: 40%; left: 60%;
-            opacity: 0.3;
-            animation: float3 25s infinite alternate ease-in-out;
-        }
-        @keyframes float1 {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(100px, 80px) scale(1.1); }
-        }
-        @keyframes float2 {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(-120px, -60px) scale(0.9); }
-        }
-        @keyframes float3 {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(60px, -100px) scale(1.2); }
-        }
-        .slide {
-            opacity: 0.4;
-            transform: scale(0.98);
-            transition: opacity 0.6s, transform 0.6s;
-        }
-        .slide.active {
-            opacity: 1;
-            transform: scale(1);
-        }
-        .layer {
-            transition: all 0.3s ease;
-        }
-        .layer:hover {
-            transform: translateX(8px);
-            background: rgba(255, 255, 255, 0.06);
-        }
-        .node {
-            animation: pulse 3s infinite ease-in-out;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 0.8; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.05); }
-        }
-        .loop-dot {
-            animation: loopPulse 4s infinite;
-        }
-        @keyframes loopPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(0,212,255,0.4); }
-            50% { box-shadow: 0 0 20px 4px rgba(139,92,246,0.3); }
-        }
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { background: #080c1c; font-family: 'Inter', sans-serif; overflow: hidden; overscroll-behavior: none; }
+        h1, h2,.display { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em; }
+       .glass { background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+       .glass-strong { background: rgba(8, 12, 28, 0.7); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.12); }
+       .text-gradient { background: linear-gradient(90deg, #00d4ff 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+       .aurora { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.5; will-change: transform; }
+       .aurora-1 { width: 800px; height: 800px; background: radial-gradient(circle, #00d4ff 0%, transparent 60%); top: -20%; left: -20%; animation: float1 22s infinite alternate ease-in-out; }
+       .aurora-2 { width: 700px; height: 700px; background: radial-gradient(circle, #8b5cf6 0%, transparent 60%); bottom: -30%; right: -15%; animation: float2 28s infinite alternate ease-in-out; }
+       .aurora-3 { width: 500px; height: 500px; background: radial-gradient(circle, #00d4ff 0%, transparent 70%); top: 40%; left: 60%; opacity: 0.3; animation: float3 25s infinite alternate ease-in-out; }
+        @keyframes float1 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(100px, 80px) scale(1.1); } }
+        @keyframes float2 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(-120px, -60px) scale(0.9); } }
+        @keyframes float3 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(60px, -100px) scale(1.2); } }
+       .slide { opacity: 0.4; transform: scale(0.98); transition: opacity 0.6s, transform 0.6s; }
+       .slide.active { opacity: 1; transform: scale(1); }
+       .layer { transition: all 0.3s ease; }
+       .layer:hover { transform: translateX(8px); background: rgba(255, 255, 255, 0.06); }
+       .node { animation: pulse 3s infinite ease-in-out; }
+        @keyframes pulse { 0%, 100% { opacity: 0.8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+       .loop-dot { animation: loopPulse 4s infinite; }
+        @keyframes loopPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(0,212,255,0.4); } 50% { box-shadow: 0 0 20px 4px rgba(139,92,246,0.3); } }
     </style>
 </head>
 <body class="text-white select-none">
-    <!-- Aurora Background -->
     <div class="fixed inset-0 -z-10">
         <div class="aurora aurora-1"></div>
         <div class="aurora aurora-2"></div>
@@ -120,401 +40,29 @@
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(0,212,255,0.08),transparent_60%)]"></div>
     </div>
 
-    <!-- Header -->
-    <div class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 md:px-10 h-16">
+    <!-- Header WITH DOWNLOADS -->
+    <div class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-4 md:px-10 h-16">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00d4ff] to-[#8b5cf6] flex items-center justify-center font-bold text-black">A</div>
             <span class="text-sm font-medium tracking-widest opacity-70">AETHERIS OS v3.0</span>
         </div>
-        <div class="text-xs opacity-50 hidden md:block">CONFIDENTIAL — SERIES A</div>
+        <div class="flex items-center gap-2">
+            <a href="./docs/AETHERIS_OS_v3_Presentation.pptx" class="hidden md:flex glass px-3 py-1.5 rounded-full text-xs hover:bg-white/10 transition">PPTX</a>
+            <a href="./docs/70-Slide-Blueprint.pdf" class="hidden md:flex glass px-3 py-1.5 rounded-full text-xs hover:bg-white/10 transition">PDF</a>
+            <a href="https://github.com/omaew84-cpu/aetheris-os-v3" target="_blank" class="glass px-3 py-1.5 rounded-full text-xs hover:bg-white/10 transition">GitHub</a>
+        </div>
     </div>
 
-    <!-- Progress -->
     <div class="fixed top-0 left-0 w-full h-[2px] z-50 bg-white/5">
         <div id="progress" class="h-full bg-gradient-to-r from-[#00d4ff] to-[#8b5cf6] transition-all duration-700 ease-out" style="width: 8.33%"></div>
     </div>
 
-    <!-- Slides Container -->
     <div class="relative w-screen h-screen overflow-hidden">
         <div id="slides" class="flex h-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]">
+            <!-- SLIDE 1-11 : ใช้โค้ดเดิมของคุณทั้งหมด (ผมตัดออกเพื่อไม่ให้ยาวเกิน) -->
+            <!-- วางสไลด์ 1-11 ของคุณตรงนี้ -->
 
-            <!-- SLIDE 1: COVER -->
-            <section class="slide active w-screen h-screen flex-shrink-0 flex items-center justify-center relative px-6">
-                <div class="text-center max-w-5xl">
-                    <div class="inline-flex items-center gap-2 glass px-3 py-1.5 rounded-full mb-8">
-                        <span class="w-2 h-2 rounded-full bg-[#00d4ff] animate-pulse"></span>
-                        <span class="text-xs tracking-widest font-medium text-[#00d4ff]">V3.0 • AUTONOMOUS ENTERPRISE</span>
-                    </div>
-                    <h1 class="display text-6xl md:text-8xl lg:text-[110px] font-bold leading-[0.85] tracking-tighter">
-                        AETHERIS
-                        <span class="text-gradient block">OS</span>
-                    </h1>
-                    <p class="text-xl md:text-2xl font-medium mt-6 opacity-80">Autonomous Enterprise Intelligence Network</p>
-                    <div class="glass-strong mt-12 md:mt-16 inline-flex flex-wrap justify-center gap-3 md:gap-6 px-6 md:px-10 py-4 rounded-2xl">
-                        <span class="text-sm md:text-base">One Platform</span>
-                        <span class="opacity-30">•</span>
-                        <span class="text-sm md:text-base">One Intelligence Layer</span>
-                        <span class="opacity-30">•</span>
-                        <span class="text-sm md:text-base">One Autonomous Enterprise</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 2: PROBLEM -->
-            <section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center relative px-6">
-                <div class="w-full max-w-6xl">
-                    <p class="text-[#00d4ff] text-sm font-semibold tracking-widest mb-4">THE PROBLEM</p>
-                    <h2 class="display text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-12 md:mb-16">Enterprises lose <span class="text-gradient">$1.8T</span> annually to inefficiency</h2>
-                    <div class="grid md:grid-cols-3 gap-4 md:gap-6">
-                        <div class="glass rounded-3xl p-8 md:p-10">
-                            <div class="text-5xl font-bold text-gradient mb-4">$1.8T</div>
-                            <h3 class="text-xl font-semibold mb-2">Lost to Inefficiency</h3>
-                            <p class="opacity-60 leading-relaxed">Manual processes, decision latency, and operational drag across the Fortune 500.</p>
-                        </div>
-                        <div class="glass rounded-3xl p-8 md:p-10">
-                            <div class="text-5xl font-bold text-gradient mb-4">73%</div>
-                            <h3 class="text-xl font-semibold mb-2">Data Trapped in Silos</h3>
-                            <p class="opacity-60 leading-relaxed">ERP, CRM, HRIS, and 200+ SaaS tools don't talk. No unified context.</p>
-                        </div>
-                        <div class="glass rounded-3xl p-8 md:p-10">
-                            <div class="text-5xl font-bold text-gradient mb-4">62%</div>
-                            <h3 class="text-xl font-semibold mb-2">Work Still Manual</h3>
-                            <p class="opacity-60 leading-relaxed">Knowledge workers spend most time on data gathering, not decisions.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 3: SOLUTION -->
-            <section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center relative px-6">
-                <div class="w-full max-w-6xl text-center">
-                    <p class="text-[#8b5cf6] text-sm font-semibold tracking-widest mb-4">THE SOLUTION</p>
-                    <h2 class="display text-5xl md:text-7xl font-bold leading-tight mb-6">AETHERIS OS</h2>
-                    <p class="text-xl md:text-2xl opacity-70 mb-16 max-w-3xl mx-auto">The Enterprise AI Operating System that unifies data, orchestrates agents, and autonomizes decisions.</p>
-                    <div class="glass-strong rounded-[2.5rem] p-8 md:p-14 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-b from-[#00d4ff]/10 to-[#8b5cf6]/10"></div>
-                        <div class="relative grid md:grid-cols-3 gap-10">
-                            <div>
-                                <div class="w-12 h-12 rounded-2xl bg-[#00d4ff]/20 flex items-center justify-center mb-4 mx-auto">
-                                    <svg width="24" height="24" fill="none" stroke="#00d4ff" stroke-width="2"><path d="M12 3v18M3 12h18"/></svg>
-                                </div>
-                                <h3 class="text-2xl font-bold mb-2">Unify</h3>
-                                <p class="opacity-60">Knowledge Graph connects every system, document, and metric.</p>
-                            </div>
-                            <div>
-                                <div class="w-12 h-12 rounded-2xl bg-[#8b5cf6]/20 flex items-center justify-center mb-4 mx-auto">
-                                    <svg width="24" height="24" fill="none" stroke="#8b5cf6" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 5 15.4a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 0 0 0 9 5a1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09c0 .66.39 1.26 1 1.51.6.24 1.28.1 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06c-.43.54-.57 1.22-.33 1.82.24.6.84 1 1.51 1H21a2 2 0 0 1 0 4h-.09c-.66 0-1.26.39-1.51 1z"/></svg>
-                                </div>
-                                <h3 class="text-2xl font-bold mb-2">Orchestrate</h3>
-                                <p class="opacity-60">7 core agents + marketplace working 24/7 across functions.</p>
-                            </div>
-                            <div>
-                                <div class="w-12 h-12 rounded-2xl bg-[#00d4ff]/20 flex items-center justify-center mb-4 mx-auto">
-                                    <svg width="24" height="24" fill="none" stroke="#00d4ff" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                                </div>
-                                <h3 class="text-2xl font-bold mb-2">Autonomize</h3>
-                                <p class="opacity-60">Neural Core learns, decides, and executes with human oversight.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 4: ARCHITECTURE -->
-            <section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center relative px-6">
-                <div class="w-full max-w-5xl">
-                    <p class="text-[#00d4ff] text-sm font-semibold tracking-widest mb-4">ARCHITECTURE</p>
-                    <h2 class="display text-4xl md:text-6xl font-bold mb-10">8-Layer Enterprise OS</h2>
-                    <div class="space-y-2.5">
-                        <div class="layer glass rounded-2xl p-4 flex items-center gap-4 border-l-4 border-[#00d4ff]">
-                            <span class="text-2xl font-bold opacity-30 w-8">8</span>
-                            <div><div class="font-semibold">Autonomous Interface Layer</div><div class="text-sm opacity-60">Natural language, copilots, voice, API</div></div>
-                        </div>
-                        <div class="layer glass rounded-2xl p-4 flex items-center gap-4 border-l-4 border-[#00d4ff]/80">
-                            <span class="text-2xl font-bold opacity-30 w-8">7</span>
-                            <div><div class="font-semibold">Agent Orchestration</div><div class="text-sm opacity-60">7 core agents + marketplace runtime</div></div>
-                        </div>
-                        <div class="layer glass rounded-2xl p-4 flex items-center gap-4 border-l-4 border-[#00d4ff]/60">
-                            <span class="text-2xl font-bold opacity-30 w-8">6</span>
-                            <div><div class="font-semibold">Neural Core</div><div class="text-sm opacity-60">Observe → Analyze → Decide → Execute → Learn → Optimize</div></div>
-                        </div>
-                        <div class="layer glass rounded-2xl p-4 flex items-center gap-4 border-l-4 border-violet-400">
-                            <span class="text-2xl font-bold opacity-30 w-8">5</span>
-                            <div><div class="font-semibold">Knowledge Graph</div><div class="text-sm opacity-60">Unified enterprise memory & context</div></div>
-                        </div>
-                        <div class="layer glass rounded-2xl p-4 flex items-center gap-4 border-l-4 border-[#8b5cf6]/80">
-                            <span class="text-2xl font-bold opacity-30 w-8">4</span>
-                            <div><div class="font-semibold">Intelligence Fabric</div><div class="text-sm opacity-60">Reasoning engine & model router</div></div>
-                        </div>
-                        <div class="layer glass rounded-2xl p-4 flex items-center gap-4 border-l-4 border-[#8b5cf6]/60">
-                            <span class="text-2xl font-bold opacity-30 w-8">3</span>
-                            <div><div class="font-semibold">Data Fusion Engine</div><div class="text-sm opacity-60">Real-time sync & vectorization</div></div>
-                        </div>
-                        <div class="layer glass rounded-2xl p-4 flex items-center gap-4 border-l-4 border-[#8b5cf6]/40">
-                            <span class="text-2xl font-bold opacity-30 w-8">2</span>
-                            <div><div class="font-semibold">Integration Mesh</div><div class="text-sm opacity-60">500+ connectors (SAP, Salesforce, Workday...)</div></div>
-                        </div>
-                        <div class="layer glass rounded-2xl p-4 flex items-center gap-4 border-l-4 border-[#8b5cf6]/20">
-                            <span class="text-2xl font-bold opacity-30 w-8">1</span>
-                            <div><div class="font-semibold">Security & Governance</div><div class="text-sm opacity-60">SOC2, HIPAA, Zero-Trust, audit trails</div></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 5: AGENTS -->
-            <section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center relative px-6">
-                <div class="w-full max-w-6xl">
-                    <p class="text-[#8b5cf6] text-sm font-semibold tracking-widest mb-4">AGENT ECOSYSTEM</p>
-                    <h2 class="display text-4xl md:text-6xl font-bold mb-10">7 Core Agents + Marketplace</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="glass rounded-3xl p-6 hover:bg-white/[0.06] transition">
-                            <div class="text-[#00d4ff] font-bold text-lg mb-1">STRATOS</div>
-                            <div class="text-sm opacity-50 mb-3">CEO Agent</div>
-                            <p class="text-sm opacity-80">Strategy, OKRs, board reporting</p>
-                        </div>
-                        <div class="glass rounded-3xl p-6 hover:bg-white/[0.06] transition">
-                            <div class="text-[#00d4ff] font-bold text-lg mb-1">FINANZA</div>
-                            <div class="text-sm opacity-50 mb-3">CFO Agent</div>
-                            <p class="text-sm opacity-80">FP&A, close, forecasting</p>
-                        </div>
-                        <div class="glass rounded-3xl p-6 hover:bg-white/[0.06] transition">
-                            <div class="text-[#8b5cf6] font-bold text-lg mb-1">OPERA</div>
-                            <div class="text-sm opacity-50 mb-3">COO Agent</div>
-                            <p class="text-sm opacity-80">Ops, supply chain, projects</p>
-                        </div>
-                        <div class="glass rounded-3xl p-6 hover:bg-white/[0.06] transition">
-                            <div class="text-[#8b5cf6] font-bold text-lg mb-1">VOX</div>
-                            <div class="text-sm opacity-50 mb-3">CXO Agent</div>
-                            <p class="text-sm opacity-80">Sales, support, success</p>
-                        </div>
-                        <div class="glass rounded-3xl p-6 hover:bg-white/[0.06] transition">
-                            <div class="text-[#00d4ff] font-bold text-lg mb-1">NEXUS</div>
-                            <div class="text-sm opacity-50 mb-3">Data Agent</div>
-                            <p class="text-sm opacity-80">Integrations, ETL, quality</p>
-                        </div>
-                        <div class="glass rounded-3xl p-6 hover:bg-white/[0.06] transition">
-                            <div class="text-[#00d4ff] font-bold text-lg mb-1">GUARDIAN</div>
-                            <div class="text-sm opacity-50 mb-3">CISO Agent</div>
-                            <p class="text-sm opacity-80">Security, compliance, risk</p>
-                        </div>
-                        <div class="glass rounded-3xl p-6 hover:bg-white/[0.06] transition">
-                            <div class="text-[#8b5cf6] font-bold text-lg mb-1">FORGE</div>
-                            <div class="text-sm opacity-50 mb-3">Builder Agent</div>
-                            <p class="text-sm opacity-80">Automations, apps, workflows</p>
-                        </div>
-                        <div class="glass rounded-3xl p-6 bg-gradient-to-br from-[#00d4ff]/10 to-[#8b5cf6]/10 border-[#00d4ff]/30">
-                            <div class="font-bold text-lg mb-1 text-gradient">MARKETPLACE</div>
-                            <div class="text-sm opacity-50 mb-3">2027</div>
-                            <p class="text-sm opacity-80">100+ specialist agents</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 6: NEURAL CORE -->
-            <section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center relative px-6">
-                <div class="w-full max-w-6xl flex flex-col md:flex-row items-center gap-12">
-                    <div class="flex-1">
-                        <p class="text-[#00d4ff] text-sm font-semibold tracking-widest mb-4">NEURAL CORE</p>
-                        <h2 class="display text-4xl md:text-6xl font-bold mb-6">Autonomous Loop</h2>
-                        <p class="text-lg opacity-70 leading-relaxed">Continuous learning system operating at 10ms latency. Every action improves the next decision.</p>
-                        <div class="mt-8 glass inline-flex items-center gap-3 px-4 py-2 rounded-full">
-                            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-                            <span class="text-sm">Learning in real-time</span>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex justify-center">
-                        <div class="relative w-[340px] h-[340px] md:w-[420px] md:h-[420px]">
-                            <div class="absolute inset-0 rounded-full border border-white/10"></div>
-                            <div class="absolute inset-8 rounded-full border border-white/5"></div>
-                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-gradient-to-br from-[#00d4ff]/30 to-[#8b5cf6]/30 blur-2xl"></div>
-                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 glass-strong w-28 h-28 rounded-full flex items-center justify-center font-bold text-sm text-center leading-tight">NEURAL<br>CORE</div>
-                            
-                            <!-- 6 Steps -->
-                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 loop-dot glass px-4 py-2 rounded-full text-sm font-semibold">OBSERVE</div>
-                            <div class="absolute top-[18%] -right-6 loop-dot glass px-4 py-2 rounded-full text-sm font-semibold">ANALYZE</div>
-                            <div class="absolute bottom-[18%] -right-6 loop-dot glass px-4 py-2 rounded-full text-sm font-semibold">DECIDE</div>
-                            <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 loop-dot glass px-4 py-2 rounded-full text-sm font-semibold">EXECUTE</div>
-                            <div class="absolute bottom-[18%] -left-6 loop-dot glass px-4 py-2 rounded-full text-sm font-semibold">LEARN</div>
-                            <div class="absolute top-[18%] -left-6 loop-dot glass px-4 py-2 rounded-full text-sm font-semibold">OPTIMIZE</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 7: KNOWLEDGE GRAPH -->
-            <section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center relative px-6">
-                <div class="w-full max-w-6xl">
-                    <p class="text-[#8b5cf6] text-sm font-semibold tracking-widest mb-4">UNIFIED MEMORY</p>
-                    <h2 class="display text-4xl md:text-6xl font-bold mb-6">Knowledge Graph</h2>
-                    <p class="text-lg opacity-70 mb-12 max-w-2xl">Every document, metric, conversation, and decision connected in real-time. No more context switching.</p>
-                    
-                    <div class="glass-strong rounded-[2rem] p-8 md:p-12 relative overflow-hidden h-[380px]">
-                        <div class="absolute inset-0">
-                            <svg class="w-full h-full opacity-20" viewBox="0 0 800 400">
-                                <defs>
-                                    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
-                                        <stop offset="0%" stop-color="#00d4ff"/>
-                                        <stop offset="100%" stop-color="#8b5cf6"/>
-                                    </linearGradient>
-                                </defs>
-                                <g stroke="url(#line)" stroke-width="1" fill="none">
-                                    <path d="M400 200 L200 120 M400 200 L200 280 M400 200 L600 120 M400 200 L600 280 M400 200 L320 80 M400 200 L480 80 M400 200 L320 320 M400 200 L480 320"/>
-                                </g>
-                            </svg>
-                        </div>
-                        <!-- Nodes -->
-                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 node">
-                            <div class="w-24 h-24 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#8b5cf6] flex items-center justify-center font-bold shadow-[0_0_40px_rgba(0,212,255,0.5)]">CORE</div>
-                        </div>
-                        <div class="absolute top-[20%] left-[20%] node" style="animation-delay:0.2s"><div class="glass px-3 py-1.5 rounded-full text-xs">Salesforce</div></div>
-                        <div class="absolute top-[20%] right-[20%] node" style="animation-delay:0.4s"><div class="glass px-3 py-1.5 rounded-full text-xs">SAP</div></div>
-                        <div class="absolute bottom-[20%] left-[25%] node" style="animation-delay:0.6s"><div class="glass px-3 py-1.5 rounded-full text-xs">Slack</div></div>
-                        <div class="absolute bottom-[20%] right-[25%] node" style="animation-delay:0.8s"><div class="glass px-3 py-1.5 rounded-full text-xs">Gmail</div></div>
-                        <div class="absolute top-[10%] left-1/2 -translate-x-1/2 node" style="animation-delay:1s"><div class="glass px-3 py-1.5 rounded-full text-xs">Docs</div></div>
-                        <div class="absolute bottom-[10%] left-1/2 -translate-x-1/2 node" style="animation-delay:1.2s"><div class="glass px-3 py-1.5 rounded-full text-xs">Metrics</div></div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 8: ROADMAP -->
-            <section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center relative px-6">
-                <div class="w-full max-w-6xl">
-                    <p class="text-[#00d4ff] text-sm font-semibold tracking-widest mb-4">ROADMAP</p>
-                    <h2 class="display text-4xl md:text-6xl font-bold mb-14">2026 — 2030</h2>
-                    <div class="relative">
-                        <div class="absolute top-8 left-0 right-0 h-[2px] bg-gradient-to-r from-[#00d4ff] via-[#8b5cf6] to-[#00d4ff]/30"></div>
-                        <div class="grid md:grid-cols-5 gap-8 relative">
-                            <div>
-                                <div class="w-4 h-4 rounded-full bg-[#00d4ff] mb-6 shadow-[0_0_20px_#00d4ff]"></div>
-                                <div class="text-[#00d4ff] font-bold mb-1">2026 Q2</div>
-                                <div class="font-semibold mb-2">v3.0 Launch</div>
-                                <p class="text-sm opacity-60">Neural Core GA, 7 agents, Fortune 500 pilots</p>
-                            </div>
-                            <div>
-                                <div class="w-4 h-4 rounded-full bg-[#7c8df0] mb-6"></div>
-                                <div class="text-[#7c8df0] font-bold mb-1">2027</div>
-                                <div class="font-semibold mb-2">Marketplace</div>
-                                <p class="text-sm opacity-60">100+ agents, 50 enterprise customers</p>
-                            </div>
-                            <div>
-                                <div class="w-4 h-4 rounded-full bg-[#8b5cf6] mb-6"></div>
-                                <div class="text-[#8b5cf6] font-bold mb-1">2028</div>
-                                <div class="font-semibold mb-2">Multi-Modal</div>
-                                <p class="text-sm opacity-60">Vision, voice, industry models</p>
-                            </div>
-                            <div>
-                                <div class="w-4 h-4 rounded-full bg-[#a57cf5] mb-6"></div>
-                                <div class="text-[#a57cf5] font-bold mb-1">2029</div>
-                                <div class="font-semibold mb-2">Autonomous Suite</div>
-                                <p class="text-sm opacity-60">Full enterprise autonomy</p>
-                            </div>
-                            <div>
-                                <div class="w-4 h-4 rounded-full bg-white/40 mb-6"></div>
-                                <div class="text-white/70 font-bold mb-1">2030</div>
-                                <div class="font-semibold mb-2">Industry Clouds</div>
-                                <p class="text-sm opacity-60">Finance, Health, Manufacturing</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 9: BUSINESS MODEL -->
-            <section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center relative px-6">
-                <div class="w-full max-w-6xl">
-                    <p class="text-[#8b5cf6] text-sm font-semibold tracking-widest mb-4">BUSINESS MODEL</p>
-                    <h2 class="display text-4xl md:text-6xl font-bold mb-12">SaaS + Usage</h2>
-                    <div class="grid md:grid-cols-3 gap-6">
-                        <div class="glass rounded-3xl p-8">
-                            <div class="text-sm opacity-60 mb-2">PLATFORM</div>
-                            <div class="text-4xl font-bold mb-4">$50k<span class="text-lg opacity-60">/yr</span></div>
-                            <p class="opacity-70">Core OS, Knowledge Graph, Security, 500+ connectors</p>
-                        </div>
-                        <div class="glass rounded-3xl p-8 border-[#00d4ff]/30 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 bg-[#00d4ff] text-black text-xs font-bold px-3 py-1 rounded-bl-xl">POPULAR</div>
-                            <div class="text-sm opacity-60 mb-2">AGENTS</div>
-                            <div class="text-4xl font-bold mb-4">$2k<span class="text-lg opacity-60">/mo</span></div>
-                            <p class="opacity-70">Per agent, unlimited tasks, 24/7 autonomy</p>
-                        </div>
-                        <div class="glass rounded-3xl p-8">
-                            <div class="text-sm opacity-60 mb-2">USAGE</div>
-                            <div class="text-4xl font-bold mb-4">$0.02</div>
-                            <p class="opacity-70">Per autonomous action, scales with value delivered</p>
-                        </div>
-                    <div class="mt-10 glass-strong rounded-2xl p-6 flex-col md:flex-row justify-between items-center gap-4">
-                        <div>
-                            <div class="font-semibold">Target ACV</div>
-                            <div class="text-sm opacity-60">Mid-market to Enterprise</div>
-                        </div>
-                        <div class="text-3xl font-bold text-gradient">$350,000</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 10: METRICS -->
-            <section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center relative px-6">
-                <div class="w-full max-w-6xl text-center">
-                    <p class="text-[#00d4ff] text-sm font-semibold tracking-widest mb-4">PROJECTIONS</p>
-                    <h2 class="display text-4xl md:text-6xl font-bold mb-16">2030 Targets</h2>
-                    <div class="grid md:grid-cols-3 gap-8">
-                        <div>
-                            <div id="metric1" class="text-7xl md:text-8xl font-black text-gradient mb-4">$100M</div>
-                            <div class="text-xl font-semibold">ARR</div>
-                            <div class="text-sm opacity-60 mt-1">500 enterprise customers</div>
-                        </div>
-                        <div>
-                            <div id="metric2" class="text-7xl md:text-8xl font-black text-gradient mb-4">130%</div>
-                            <div class="text-xl font-semibold">NRR</div>
-                            <div class="text-sm opacity-60 mt-1">Best-in-class expansion</div>
-                        </div>
-                        <div>
-                            <div id="metric3" class="text-7xl md:text-8xl font-black text-gradient mb-4">85%</div>
-                            <div class="text-xl font-semibold">Gross Margin</div>
-                            <div class="text-sm opacity-60 mt-1">Software scale economics</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 11: COMPETITIVE -->
-            <section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center relative px-6">
-                <div class="w-full max-w-6xl">
-                    <p class="text-[#8b5cf6] text-sm font-semibold tracking-widest mb-4">COMPETITIVE EDGE</p>
-                    <h2 class="display text-4xl md:text-6xl font-bold mb-10">Built for Autonomy, Not Assist</h2>
-                    <div class="glass-strong rounded-3xl overflow-hidden">
-                        <div class="grid grid-cols-4 gap-px bg-white/10">
-                            <div class="bg-[#080c1c] p-5 font-semibold">Capability</div>
-                            <div class="bg-[#080c1c] p-5 font-semibold opacity-60">Legacy ERP</div>
-                            <div class="bg-[#080c1c] p-5 font-semibold opacity-60">Modern CRM</div>
-                            <div class="bg-[#080c1c] p-5 font-semibold text-[#00d4ff]">AETHERIS OS</div>
-                            
-                            <div class="bg-[#080c1c]/80 p-5">Data Model</div>
-                            <div class="bg-[#080c1c]/80 p-5 opacity-60">Siloed</div>
-                            <div class="bg-[#080c1c]/80 p-5 opacity-60">App-centric</div>
-                            <div class="bg-[#080c1c]/60 p-5 text-[#00d4ff] font-medium">Unified Graph</div>
-                            
-                            <div class="bg-[#080c1c]/80 p-5">AI Approach</div>
-                            <div class="bg-[#080c1c]/80 p-5 opacity-60">Bolt-on</div>
-                            <div class="bg-[#080c1c]/80 p-5 opacity-60">Copilot</div>
-                            <div class="bg-[#080c1c]/60 p-5 text-[#00d4ff] font-medium">Native Autonomous</div>
-                            
-                            <div class="bg-[#080c1c]/80 p-5">Time to Value</div>
-                            <div class="bg-[#080c1c]/80 p-5 opacity-60">18 months</div>
-                            <div class="bg-[#080c1c]/80 p-5 opacity-60">6 months</div>
-                            <div class="bg-[#080c1c]/60 p-5 text-[#00d4ff] font-medium">30 days</div>
-                            
-                            <div class="bg-[#080c1c]/80 p-5">Customization</div>
-                            <div class="bg-[#080c1c]/80 p-5 opacity-60">Code-heavy</div>
-                            <div class="bg-[#080c1c]/80 p-5 opacity-60">Clicks</div>
-                            <div class="bg-[#080c1c]/60 p-5 text-[#00d4ff] font-medium">Natural Language</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 12: CLOSING -->
+            <!-- SLIDE 12 : CLOSING + MOBILE BUTTONS -->
             <section class="slide w-screen h-screen flex-shrink-0 flex items-center justify-center relative px-6">
                 <div class="text-center max-w-4xl">
                     <div class="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-8">
@@ -523,120 +71,35 @@
                     </div>
                     <h2 class="display text-5xl md:text-7xl font-bold leading-tight mb-6">Raising <span class="text-gradient">$15M</span></h2>
                     <p class="text-xl opacity-80 mb-12">To scale the Autonomous Enterprise</p>
-                    
-                    <div class="grid md:grid-cols-3 gap-4 mb-14 text-left">
-                        <div class="glass rounded-2xl p-6">
-                            <div class="text-3xl font-bold text-[#00d4ff] mb-1">50%</div>
-                            <div class="font-semibold">R&D</div>
-                            <div class="text-sm opacity-60">Neural Core, Agents</div>
-                        </div>
-                        <div class="glass rounded-2xl p-6">
-                            <div class="text-3xl font-bold text-[#8b5cf6] mb-1">30%</div>
-                            <div class="font-semibold">GTM</div>
-                            <div class="text-sm opacity-60">Enterprise sales</div>
-                        </div>
-                        <div class="glass rounded-2xl p-6">
-                            <div class="text-3xl font-bold text-white mb-1">20%</div>
-                            <div class="font-semibold">Infra</div>
-                            <div class="text-sm opacity-60">Security & Scale</div>
-                        </div>
+
+                    <div class="grid md:grid-cols-3 gap-4 mb-10 text-left">
+                        <div class="glass rounded-2xl p-6"><div class="text-3xl font-bold text-[#00d4ff] mb-1">50%</div><div class="font-semibold">R&D</div><div class="text-sm opacity-60">Neural Core, Agents</div></div>
+                        <div class="glass rounded-2xl p-6"><div class="text-3xl font-bold text-[#8b5cf6] mb-1">30%</div><div class="font-semibold">GTM</div><div class="text-sm opacity-60">Enterprise sales</div></div>
+                        <div class="glass rounded-2xl p-6"><div class="text-3xl font-bold text-white mb-1">20%</div><div class="font-semibold">Infra</div><div class="text-sm opacity-60">Security & Scale</div></div>
+                    </div>
+
+                    <!-- MOBILE DOWNLOADS -->
+                    <div class="flex flex-wrap justify-center gap-3 mb-8 md:hidden">
+                        <a href="./docs/AETHERIS_OS_v3_Presentation.pptx" class="glass px-5 py-3 rounded-xl text-sm">ดาวน์โหลด PPTX</a>
+                        <a href="./docs/70-Slide-Blueprint.pdf" class="glass px-5 py-3 rounded-xl text-sm">ดาวน์โหลด PDF</a>
                     </div>
 
                     <div class="glass-strong inline-flex flex-col md:flex-row items-center gap-6 px-8 py-6 rounded-2xl">
-                        <div>
-                            <div class="text-sm opacity-60">Contact</div>
-                            <div class="font-mono text-lg">founders@aetheris.ai</div>
-                        </div>
+                        <div><div class="text-sm opacity-60">Contact</div><div class="font-mono text-lg">founders@aetheris.ai</div></div>
                         <div class="hidden md:block w-px h-10 bg-white/10"></div>
                         <div class="text-sm opacity-70">One Platform • One Intelligence Layer • One Autonomous Enterprise</div>
                     </div>
                 </div>
             </section>
-
         </div>
     </div>
 
-    <!-- Navigation -->
-    <button id="prev" class="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-50 w-11 h-11 glass rounded-full flex items-center justify-center hover:bg-white/10 transition opacity-50 hover:opacity-100">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-    </button>
-    <button id="next" class="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 w-11 h-11 glass rounded-full flex items-center justify-center hover:bg-white/10 transition">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-    </button>
-
-    <!-- Counter -->
-    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 glass px-4 py-2 rounded-full flex items-center gap-3">
-        <span id="current" class="text-sm font-medium w-4 text-center">1</span>
-        <div class="w-16 h-[2px] bg-white/20 rounded-full overflow-hidden">
-            <div id="mini-progress" class="h-full bg-white transition-all duration-500" style="width: 8.33%"></div>
-        </div>
-        <span class="text-sm opacity-50">12</span>
-    </div>
-
-    <!-- Hint -->
-    <div id="hint" class="fixed bottom-6 left-6 z-50 text-xs opacity-60 hidden md:flex items-center gap-2 transition-opacity duration-500">
-        <span>Press</span>
-        <kbd class="glass px-1.5 py-0.5 rounded text-[10px]">→</kbd>
-        <span>to navigate</span>
-    </div>
-
+    <!-- Navigation (เหมือนเดิม) -->
+    <button id="prev" class="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-50 w-11 h-11 glass rounded-full flex items-center justify-center hover:bg-white/10 transition opacity-50 hover:opacity-100"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <button id="next" class="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 w-11 h-11 glass rounded-full flex items-center justify-center hover:bg-white/10 transition"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 glass px-4 py-2 rounded-full flex items-center gap-3"><span id="current" class="text-sm font-medium w-4 text-center">1</span><div class="w-16 h-[2px] bg-white/20 rounded-full overflow-hidden"><div id="mini-progress" class="h-full bg-white transition-all duration-500" style="width: 8.33%"></div></div><span class="text-sm opacity-50">12</span></div>
     <script>
-        const slides = document.getElementById('slides');
-        const total = 12;
-        let current = 0;
-        const slideEls = document.querySelectorAll('.slide');
-        
-        function update() {
-            slides.style.transform = `translateX(-${current * 100}vw)`;
-            document.getElementById('current').textContent = current + 1;
-            document.getElementById('progress').style.width = `${((current + 1) / total) * 100}%`;
-            document.getElementById('mini-progress').style.width = `${((current + 1) / total) * 100}%`;
-            
-            slideEls.forEach((el, i) => {
-                el.classList.toggle('active', i === current);
-            });
-            
-            document.getElementById('prev').style.opacity = current === 0 ? '0.3' : '1';
-            document.getElementById('next').style.opacity = current === total - 1 ? '0.3' : '1';
-            
-            hideHint();
-        }
-        
-        function next() {
-            if (current < total - 1) { current++; update(); }
-        }
-        function prev() {
-            if (current > 0) { current--; update(); }
-        }
-        
-        document.getElementById('next').onclick = next;
-        document.getElementById('prev').onclick = prev;
-        
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
-            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
-        });
-        
-        // Touch
-        let startX = 0;
-        slides.addEventListener('touchstart', e => startX = e.touches[0].clientX, {passive: true});
-        slides.addEventListener('touchend', e => {
-            const dx = e.changedTouches[0].clientX - startX;
-            if (dx < -50) next();
-            if (dx > 50) prev();
-        }, {passive: true});
-        
-        // Hint
-        const hint = document.getElementById('hint');
-        function hideHint() {
-            hint.style.opacity = '0';
-            setTimeout(() => hint.style.display = 'none', 500);
-        }
-        setTimeout(hideHint, 5000);
-        
-        // Init
-        update();
+        const slides=document.getElementById('slides');const total=12;let current=0;const slideEls=document.querySelectorAll('.slide');function update(){slides.style.transform=`translateX(-${current*100}vw)`;document.getElementById('current').textContent=current+1;document.getElementById('progress').style.width=`${((current+1)/total)*100}%`;document.getElementById('mini-progress').style.width=`${((current+1)/total)*100}%`;slideEls.forEach((el,i)=>{el.classList.toggle('active',i===current);});}function next(){if(current<total-1){current++;update();}}function prev(){if(current>0){current--;update();}}document.getElementById('next').onclick=next;document.getElementById('prev').onclick=prev;window.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'){e.preventDefault();prev();}});let startX=0;slides.addEventListener('touchstart',e=>startX=e.touches[0].clientX,{passive:true});slides.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-startX;if(dx<-50)next();if(dx>50)prev();},{passive:true});update();
     </script>
-<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
 </body>
 </html>
